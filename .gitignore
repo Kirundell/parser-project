@@ -1,0 +1,13 @@
+*.csv
+venv
+pages
+test_data
+.idea
+__pycache__
+.env
+ati_cookies
+config.py
+README.md
+test.py
+some_shit.py
+tg_bot.py
