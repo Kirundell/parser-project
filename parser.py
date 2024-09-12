@@ -37,6 +37,8 @@ browser = webdriver.Chrome(service=service,
 # не отображает грузы
 flag = 0
 
+# Счетчик количества итераций парсера
+iter_counter = 0
 
 # Настройка базовых конфигураций логов
 def configure_logging(level: int) -> None:
@@ -345,14 +347,14 @@ def pdf_pars(n_route: int, number_of_page: int) -> None:
 # Основная функция запуска парсера
 def parser_main():
     # Запускаем долгий цикл, рассчитанный примерно на 12 часов непрерывной работы
-    for i in range(660 + 1):
-        logger.info("Старт %s итерации парсера", i)
-        global flag, sp
+    while True:
+        logger.info("Старт %s итерации парсера", iter_counter)
+        global flag, sp, iter_counter
         # Отдельно обрабатываем первую итерацию парсинга. При первой итерации программа обрабатывает грузы,
         # которые выложены за весь временной промежуток. Делается это из расчета на то, что программа в первый раз
         # может быть запущена спустя какой-то промежуток времени, поэтому нужно обработать все имеющиеся на данный
         # момент перевозки.
-        if i == 0:
+        if iter_counter == 0:
             start_time = time.time()
             list_of_route = [
                 'https://loads.ati.su/?utm_source=header&utm_campaign=new_header&_gl=1*hksq9c*_gcl_au*MTI3MTU5OTUyNi4x'
@@ -431,10 +433,11 @@ def parser_main():
             end_time = time.time()
             execution_time = end_time - start_time
             logger.info("Время выполнения: %s секунд", execution_time)
-            logger.info("Конец %s итерации парсера\n", i)
+            logger.info("Конец %s итерации парсера\n", iter_counter)
 
             # Функция из файла preproc.py, которая выполняет обработку данных и загрузку их в бд
             preprocessing_result()
+            iter_counter += 1
             time.sleep(120)
 
             # break
@@ -504,9 +507,10 @@ def parser_main():
             end_time = time.time()
             execution_time = end_time - start_time
             logger.info("Время выполнения: %s секунд", execution_time)
-            logger.info("Конец %s итерации парсера\n", i)
+            logger.info("Конец %s итерации парсера\n", iter_counter)
 
             preprocessing_result()
+            iter_counter += 1
             time.sleep(120)
             # time.sleep(20)
 
