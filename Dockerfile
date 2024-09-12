@@ -30,11 +30,8 @@ RUN CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_
     rm chromedriver_linux64.zip
 
 
-COPY ati_parser.py ati_parser.py
-COPY tg_load.py tg_load.py
-COPY tg_bot.py tg_bot.py
-COPY preproc.py preproc.py
-COPY model2.pkl model2.pkl
-COPY db_connect.py db_connect.py
+COPY *.py ./
+COPY model2.pkl ./
+
 
 CMD ["python", "tg_bot.py"]
