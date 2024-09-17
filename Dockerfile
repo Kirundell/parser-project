@@ -32,6 +32,7 @@ RUN CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_
 
 COPY *.py ./
 COPY model2.pkl ./
+COPY .env .env
 
 
-CMD ["python", "tg_bot.py"]
+CMD ["python", "new_tg_bot.py"]
