@@ -55,9 +55,29 @@ configure_logging(level=logging.INFO)
 
 
 # Функция для авторизации на сайте ати
-def login(email: str, password: str) -> None:
+def login(email: str, password: str) -> int | None:
     logger.info("Начало авторизации")
-    browser.get("https://id.ati.su/login/?next=https%3A%2F%2Fati.su%2F")
+
+    # Заходим на сайт для авторизации
+    try:
+        browser.get("https://id.ati.su/login/?next=https%3A%2F%2Fati.su%2F")
+        # Ожидание, пока загрузится элемент
+        wait = WebDriverWait(browser, 30)
+        wait.until(EC.presence_of_element_located(
+            (By.XPATH, '//button[@class="glz-button glz-is-primary login-control-button"]')))
+    except TimeoutException:
+        # Перезагружаем страницу
+        browser.refresh()
+        try:
+            browser.get("https://id.ati.su/login/?next=https%3A%2F%2Fati.su%2F")
+            # Ожидание, пока загрузится элемент
+            wait = WebDriverWait(browser, 30)
+            wait.until(EC.presence_of_element_located(
+                (By.XPATH, '//button[@class="glz-button glz-is-primary login-control-button"]')))
+        except TimeoutException:
+            # Если не удалось загрузить страницу, то переходим к следующей итерации цикла
+            logger.warning("Не удалось загрузить страницу для начала авторизации")
+            return -1
 
     # Получение высоты страницы
     total_height = browser.execute_script("return document.body.scrollHeight")
@@ -135,7 +155,8 @@ def get_number_of_pages(route: str) -> int:
                 # Удаление всех куки
                 browser.delete_all_cookies()
                 # Повторная авторизация на сайте
-                login(os.getenv('ATI_LOGIN'), os.getenv('ATI_PASSWORD'))
+                if login(os.getenv('ATI_LOGIN'), os.getenv('ATI_PASSWORD')) == -1:
+                    return -1
                 # Загрузка куки
                 ati_cookie()
                 # Заходим на страницу с грузами
@@ -393,8 +414,11 @@ def parser_main():
                 'ght%22:%7B%22to%22:20%7D,%22firmListsExclusiveMode%22:false,%22truckType%22:%221%22,%22loadingType%22'
                 ':%2215%22,%22withAuction%22:false%7D'
             ]
+
             # Авторизация на сайте
-            login(os.getenv('ATI_LOGIN'), os.getenv('ATI_PASSWORD'))
+            # Если не удалось загрузить страницу, то переходим к следующей итерации цикла
+            if login(os.getenv('ATI_LOGIN'), os.getenv('ATI_PASSWORD')) == -1:
+                continue
             # Загрузка куки
             ati_cookie()
 
