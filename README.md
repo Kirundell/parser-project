@@ -41,3 +41,7 @@ DB_URL='postgresql+psycopg2://DB_USER:DB_PASSWORD@DB_HOST:DB_PORT/DB_NAME'
 ```docker
 docker compose up -d --build
 ```
+_____
+## Как это выглядит? :eyes:
+Перевозки, выгружаемые в бота, выглядят следующим образом:  
+![image](https://github.com/user-attachments/assets/c0bb3fb3-96b8-4e84-9305-97d8a2d1516e)
