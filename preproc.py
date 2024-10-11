@@ -36,7 +36,7 @@ def first_step(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def second_step(new_df: pd.DataFrame) -> pd.DataFrame:
-    new_df['Cargo'] = new_df['Cargo'].fillna(
+    new_df.loc[:,'Cargo'] = new_df['Cargo'].fillna(
         'Информация о грузе не найдена')  # заменим пропуски значением 'Информация о грузе не найдена'
     new_df = new_df.assign(number_of_cargo=new_df['Number_of_cargo'].apply(
         lambda x: re.sub(r'Ном.*$', '', x)))  # удалим лишнее в первом столбце
